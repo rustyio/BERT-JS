@@ -5,15 +5,21 @@ BERT (Binary ERlang Term) is a format created by the Erlang development team for
 
 <a href="http://www.erlang-factory.com/upload/presentations/36/tom_preston_werner_erlectricity.pdf">Read Tom's Slides</a>
 
+
 <h2>What is BERT JS?</h2>
 
 BERT-JS is a first cut Javascript implementation of the BERT protocol. In other words, using BERT-JS, you can encode data into a binary format that can then be decoded by an Erlang VM. (Or, by Ruby, as Tom has written a BERT translator for Ruby.) 
 
 Currently, BERT-JS can only encode from Javascript objects into BERT. It cannot yet decode.
 
+
 <h2>Interface</h2>
 
-* <b>Bert.encode(Object)</b> - Encode a Javascript object into BERT, return a String. The object can be a Boolean, Integer, Float, String, Array, Associative Array, or an Atom, Tuple, or Binary (with the help of Bert.atom(), Bert.tuple(), and Bert.binary(), respectively).
+* <b>Bert.encode(Object)</b> - Encode a Javascript object into BERT, return a String. The object can be a Boolean, Integer, Float, String, Array, Associative Array, or an Atom, Binary, or Tuple. (with the help of Bert.atom(), Bert.binary(), or Bert.tuple(), respectively).
+* <b>Bert.atom(String)</b> - Create a Javascript object that will be encoded to an Atom.
+* <b>Bert.binary(String)</b> - Create a Javascript object that will be encoded to an Binary.
+* <b>Bert.tuple(Element1, Element2, Element3, ...)</b> - Create a Javascript object that will be encoded to a Tuple.
+
 
 <h2>Examples</h2>
 
