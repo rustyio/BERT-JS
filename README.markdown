@@ -1,17 +1,16 @@
 <h1>BERT-JS</h1>
 
 <h2>What is BERT?</h2>
-BERT (Binary ERlang Term) is a format created by the Erlang development team for serializing Erlang terms, and espoused by Tom Preston-Werner as a way for different languages to speak to each other in a simple and efficient manner.
+BERT (Binary ERlang Term) is a format created by the Erlang development team for serializing Erlang terms, and espoused by Tom Preston-Werner as a way for different languages to communicate in a simple and efficient manner.
 
 <a href="http://www.erlang-factory.com/upload/presentations/36/tom_preston_werner_erlectricity.pdf">Read Tom's Slides</a>
 
 
 <h2>What is BERT JS?</h2>
 
-BERT-JS is a first cut Javascript implementation of the BERT protocol. In other words, using BERT-JS, you can encode data into a binary format that can then be decoded by an Erlang VM. (Or, by Ruby, as Tom has written a BERT translator for Ruby.) 
+BERT-JS is a first cut Javascript implementation of the BERT protocol. In other words, using BERT-JS, you can serialize data into a binary format that can then be de-serialized by Erlang directly into an Erlang term. (Or, by Ruby, as Tom has written a BERT library for Ruby.) 
 
 Currently, BERT-JS can only encode from Javascript objects into BERT. It cannot yet decode.
-
 
 <h2>Interface</h2>
 
