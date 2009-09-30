@@ -46,6 +46,7 @@ function BertBinary(Obj) {
 function BertTuple(Arr) {
 	this.type = "Tuple";
 	this.length = Arr.length;
+	this.value = Arr;
 	for (var i=0; i<Arr.length; i++) {
 		this[i] = Arr[i];
 	}
@@ -212,6 +213,7 @@ BertClass.prototype.decode_inner = function(S) {
 	if (Type == this.LIST) return this.decode_list(S);
 	if (Type == this.SMALL_TUPLE) return this.decode_tuple(S, 1);
 	if (Type == this.LARGE_TUPLE) return this.decode_large_tuple(S, 4);
+	if (Type == this.NIL) return this.decode_nil(S);
 	throw("Unexpected BERT type: " + String.charCodeAt(Type));
 }
 
@@ -299,6 +301,14 @@ BertClass.prototype.decode_tuple = function(S, Count) {
 		value: Bert.tuple(Arr),
 		rest: S
 	}	
+}
+
+BertClass.prototype.decode_nil = function(S) {
+	// nil is an empty list
+	return {
+		value: new Array(),
+		rest: S
+	};
 }
 
 
