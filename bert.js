@@ -1,3 +1,9 @@
+// BERT-JS
+// Javascript Implementation of Binary Erlang Term Serialization.
+// http://github.com/rklophaus/BERT-JS
+// Copyright (c) 2009 Rusty Klophaus (@rklophaus)
+// See MIT-LICENSE for licensing information.
+
 function BertClass() { 
 }
 
