@@ -216,10 +216,6 @@ BertClass.prototype.test = function() {
 		a : Bert.tuple(1, 2, 3),
 		b : [4, 5, 6]
 	}));
-
-	// Bert.pp(Bert.encode(Bert.binary("hello")));
 }
 
 var Bert = new BertClass();
-
-Bert.test();
