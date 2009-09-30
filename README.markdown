@@ -22,7 +22,7 @@ Currently, BERT-JS can only encode from Javascript objects into BERT. It cannot 
 
 <h2>Examples</h2>
 
-Note, below the return value is given in the form of an Erlang binary. In reality, this returns a Javascript String with the ASCII values of the binary. 
+Note, below the return value is given in the form of an Erlang binary which can be fed into Erlang's binary_to_term/1. In reality, this returns a Javascript String with the ASCII values of the binary. 
 
 	Bert.encode(Bert.atom("hello"));
 	Returns: <<131,100,0,5,104,101,108,108,111>>
