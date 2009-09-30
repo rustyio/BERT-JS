@@ -1,7 +1,7 @@
 <h1>BERT-JS</h1>
 
 <h2>What is BERT?</h2>
-BERT (Binary ERlang Term) is a format created by the Erlang development team for serializing Erlang terms, and espoused by Tom Preston-Werner as a way for different languages to communicate in a simple and efficient manner.
+BERT (Binary ERlang Term) is a format created by the Erlang development team for serializing Erlang terms, and promoted by Tom Preston-Werner as a way for different languages to communicate in a simple and efficient manner.
 
 <a href="http://www.erlang-factory.com/upload/presentations/36/tom_preston_werner_erlectricity.pdf">Read Tom's Slides</a>
 
