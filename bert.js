@@ -1,8 +1,17 @@
 // BERT-JS
-// Javascript Implementation of Binary Erlang Term Serialization.
-// http://github.com/rklophaus/BERT-JS
 // Copyright (c) 2009 Rusty Klophaus (@rklophaus)
 // See MIT-LICENSE for licensing information.
+
+
+// BERT-JS is a Javascript implementation of Binary Erlang Term Serialization.
+// - http://github.com/rklophaus/BERT-JS
+//
+// References:
+// - http://www.erlang-factory.com/upload/presentations/36/tom_preston_werner_erlectricity.pdf
+// - http://www.erlang.org/doc/apps/erts/erl_ext_dist.html#8
+
+
+// - CLASSES -
 
 function BertClass() { 
 }
@@ -26,6 +35,14 @@ function BertTuple(Arr) {
 	return "";
 }
 
+
+
+// - INTERFACE -
+
+BertClass.prototype.encode = function(Obj) {
+	return String.fromCharCode(131) + this.encode_inner(Obj);
+}
+
 BertClass.prototype.atom = function(Obj) {
 	return new BertAtom(Obj);
 }
@@ -38,9 +55,9 @@ BertClass.prototype.tuple = function() {
 	return new BertTuple(arguments);
 }
 
-BertClass.prototype.encode = function(Obj) {
-	return String.fromCharCode(131) + this.encode_inner(Obj);
-}
+
+
+// - ENCODING - 
 
 BertClass.prototype.encode_inner = function(Obj) {
 	var type = typeof(Obj);
@@ -147,6 +164,13 @@ BertClass.prototype.encode_associative_array = function(Obj) {
 	return this.encode_array(Arr);
 }
 
+
+
+// - UTILITY FUNCTIONS -
+
+// Encode an integer to a byte-string of length Count.
+// Throw an exception if the integer is too large
+// to fit into the specified number of bytes.
 BertClass.prototype.to_bytes = function(Int, Count) {
 	var isNegative = Int < 0;
 	if (isNegative) { Int = ~Int; }
@@ -162,6 +186,10 @@ BertClass.prototype.to_bytes = function(Int, Count) {
 	return s;
 }
 
+// Encode an integer into an Erlang bignum,
+// which is a byte of 1 or 0 representing
+// whether the number is negative or positive,
+// followed by little-endian bytes. 
 BertClass.prototype.to_bignum = function(Int) {
   var isNegative = Int < 0;
 	var s = "";
@@ -181,6 +209,7 @@ BertClass.prototype.to_bignum = function(Int) {
 	return s;
 }
 
+// Convert an array of bytes into a string.
 BertClass.prototype.to_string = function(Arr) {
 	var s = "";
 	for (var i=0; i<Arr.length; i++) {
@@ -189,6 +218,10 @@ BertClass.prototype.to_string = function(Arr) {
 	return s;
 }
 
+// - TESTING -
+
+// Display an alert box showing a byte-string
+// in Erlang binary form.
 BertClass.prototype.pp = function(Bin) {
 	s = "";
 	for (var i=0; i<Bin.length; i++) {
@@ -198,6 +231,8 @@ BertClass.prototype.pp = function(Bin) {
 	alert("<<" + s + ">>");
 }
 
+// Show off the different type of encodings we
+// can handle.
 BertClass.prototype.test = function() {
 	Bert.pp(Bert.encode(Bert.atom("hello")));
 	Bert.pp(Bert.encode(Bert.binary("hello")));
