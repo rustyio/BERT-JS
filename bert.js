@@ -258,7 +258,11 @@ BertClass.prototype.decode_big = function(S, Count) {
 }
 
 BertClass.prototype.decode_float = function(S) { 
-	throw("Decoding floats not yet supported!");
+	var Size = 31;
+	return {
+		value: parseFloat(S.substring(0, Size)),
+		rest: S.substring(Size)
+	};
 }
 
 BertClass.prototype.decode_string = function(S) { 
