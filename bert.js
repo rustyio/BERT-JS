@@ -56,8 +56,8 @@ function BertTuple(Arr) {
 		this[i] = Arr[i];
 	}
 	this.toString = function () {
-		var s = "";
-		for (var i = 0; i < this.length; i++) {
+		var i, s = "";
+		for (i = 0; i < this.length; i++) {
 			if (s != "") {
 				s += ", ";
 			}
@@ -122,7 +122,7 @@ BertClass.prototype.encode_boolean = function (Obj) {
 };
 
 BertClass.prototype.encode_number = function (Obj) {
-	var isInteger = (Obj % 1 === 0);
+	var s, isInteger = (Obj % 1 === 0);
 
 	// Handle floats...
 	if (!isInteger) {
@@ -140,7 +140,7 @@ BertClass.prototype.encode_number = function (Obj) {
 	}
 
 	// Bignum...
-	var s = this.bignum_to_bytes(Obj);
+	s = this.bignum_to_bytes(Obj);
 	if (s.length < 256) {
 		return this.SMALL_BIG + this.int_to_bytes(s.length - 1, 1) + s;
 	} else {
@@ -188,21 +188,21 @@ BertClass.prototype.encode_binary = function (Obj) {
 };
 
 BertClass.prototype.encode_tuple = function (Obj) {
-	var s = "";
+	var i, s = "";
 	if (Obj.length < 256) {
 		s += this.SMALL_TUPLE + this.int_to_bytes(Obj.length, 1);
 	} else {
 		s += this.LARGE_TUPLE + this.int_to_bytes(Obj.length, 4);
 	}
-	for (var i = 0; i < Obj.length; i++) {
+	for (i = 0; i < Obj.length; i++) {
 		s += this.encode_inner(Obj[i]);
 	}
 	return s;
 };
 
 BertClass.prototype.encode_array = function (Obj) {
-	var s = this.LIST + this.int_to_bytes(Obj.length, 4);
-	for (var i = 0; i < Obj.length; i++) {
+	var i, s = this.LIST + this.int_to_bytes(Obj.length, 4);
+	for (i = 0; i < Obj.length; i++) {
 		s += this.encode_inner(Obj[i]);
 	}
 	s += this.NIL;
@@ -210,8 +210,8 @@ BertClass.prototype.encode_array = function (Obj) {
 };
 
 BertClass.prototype.encode_associative_array = function (Obj) {
-	var Arr = [];
-	for (var key in Obj) {
+	var key, Arr = [];
+	for (key in Obj) {
 		if (Obj.hasOwnProperty(key)) {
 			Arr.push(this.tuple(this.atom(key), Obj[key]));
 		}
@@ -259,9 +259,10 @@ BertClass.prototype.decode_inner = function (S) {
 };
 
 BertClass.prototype.decode_atom = function (S, Count) {
-	var Size = this.bytes_to_int(S, Count);
+	var Size, Value;
+	Size = this.bytes_to_int(S, Count);
 	S = S.substring(Count);
-	var Value = S.substring(0, Size);
+	Value = S.substring(0, Size);
 	if (Value == "true") {
 		Value = true;
 	}
@@ -293,9 +294,10 @@ BertClass.prototype.decode_integer = function (S, Count) {
 };
 
 BertClass.prototype.decode_big = function (S, Count) {
-	var Size = this.bytes_to_int(S, Count);
+	var Size, Value;
+	Size = this.bytes_to_int(S, Count);
 	S = S.substring(Count);
-	var Value = this.bytes_to_bignum(S, Size);
+	Value = this.bytes_to_bignum(S, Size);
 	return {
 		value : Value,
 		rest: S.substring(Size + 1)
@@ -320,15 +322,15 @@ BertClass.prototype.decode_string = function (S) {
 };
 
 BertClass.prototype.decode_list = function (S) {
-	var Size = this.bytes_to_int(S, 4);
+	var Size, i, El, LastChar, Arr = [];
+	Size = this.bytes_to_int(S, 4);
 	S = S.substring(4);
-	var Arr = [];
-	for (var i = 0; i < Size; i++) {
-		var El = this.decode_inner(S);
+	for (i = 0; i < Size; i++) {
+		El = this.decode_inner(S);
 		Arr.push(El.value);
 		S = El.rest;
 	}
-	var LastChar = S[0];
+	LastChar = S[0];
 	if (LastChar != this.NIL) {
 		throw ("List does not end with NIL!");
 	}
@@ -340,11 +342,11 @@ BertClass.prototype.decode_list = function (S) {
 };
 
 BertClass.prototype.decode_tuple = function (S, Count) {
-	var Size = this.bytes_to_int(S, Count);
+	var Size, i, El, Arr = [];
+	Size = this.bytes_to_int(S, Count);
 	S = S.substring(Count);
-	var Arr = [];
-	for (var i = 0; i < Size; i++) {
-		var El = this.decode_inner(S);
+	for (i = 0; i < Size; i++) {
+		El = this.decode_inner(S);
 		Arr.push(El.value);
 		S = El.rest;
 	}
@@ -370,14 +372,14 @@ BertClass.prototype.decode_nil = function (S) {
 // Throw an exception if the integer is too large
 // to fit into the specified number of bytes.
 BertClass.prototype.int_to_bytes = function (Int, Length) {
-	var isNegative = (Int < 0);
+	var isNegative, OriginalInt, i, Rem, s = "";
+	isNegative = (Int < 0);
 	if (isNegative) {
 		Int = Int * (0 - 1);
 	}
-	var s = "";
-	var OriginalInt = Int;
-	for (var i = 0; i < Length; i++) {
-		var Rem = Int % 256;
+	OriginalInt = Int;
+	for (i = 0; i < Length; i++) {
+		Rem = Int % 256;
 		if (isNegative) {
 			Rem = 255 - Rem;
 		}
@@ -393,10 +395,10 @@ BertClass.prototype.int_to_bytes = function (Int, Length) {
 // Read a big-endian encoded integer from the first Length bytes
 // of the supplied string.
 BertClass.prototype.bytes_to_int = function (S, Length) {
-	var Num = 0;
-	var isNegative = (String.charCodeAt(S[0]) > 128);
-	for (var i = 0; i < Length; i++) {
-		var n = String.charCodeAt(S[i]);
+	var isNegative, i, n, Num = 0;
+	isNegative = (String.charCodeAt(S[0]) > 128);
+	for (i = 0; i < Length; i++) {
+		n = String.charCodeAt(S[i]);
 		if (isNegative) {
 			n = 255 - n;
 		}
@@ -418,8 +420,8 @@ BertClass.prototype.bytes_to_int = function (S, Length) {
 // whether the number is negative or positive,
 // followed by little-endian bytes.
 BertClass.prototype.bignum_to_bytes = function (Int) {
-	var isNegative = Int < 0;
-	var s = "";
+	var isNegative, Rem, s = "";
+	isNegative = Int < 0;
 	if (isNegative) {
 		Int *= -1;
 		s += String.fromCharCode(1);
@@ -428,7 +430,7 @@ BertClass.prototype.bignum_to_bytes = function (Int) {
 	}
 
 	while (Int !== 0) {
-		var Rem = Int % 256;
+		Rem = Int % 256;
 		s += String.fromCharCode(Rem);
 		Int = Math.floor(Int / 256);
 	}
@@ -438,11 +440,11 @@ BertClass.prototype.bignum_to_bytes = function (Int) {
 
 // Encode a list of bytes into an Erlang bignum.
 BertClass.prototype.bytes_to_bignum = function (S, Count) {
-	var isNegative = (String.charCodeAt(S[0]) == 1);
+	var isNegative, i, n, Num = 0;
+	isNegative = (String.charCodeAt(S[0]) == 1);
 	S = S.substring(1);
-	var Num = 0;
-	for (var i = Count - 1; i >= 0; i--) {
-		var n = String.charCodeAt(S[i]);
+	for (i = Count - 1; i >= 0; i--) {
+		n = String.charCodeAt(S[i]);
 		if (Num === 0) {
 			Num = n;
 		}
@@ -458,8 +460,8 @@ BertClass.prototype.bytes_to_bignum = function (S, Count) {
 
 // Convert an array of bytes into a string.
 BertClass.prototype.bytes_to_string = function (Arr) {
-	var s = "";
-	for (var i = 0; i < Arr.length; i++) {
+	var i, s = "";
+	for (i = 0; i < Arr.length; i++) {
 		s += String.fromCharCode(Arr[i]);
 	}
 	return s;
@@ -469,8 +471,8 @@ BertClass.prototype.bytes_to_string = function (Arr) {
 
 // Pretty Print a byte-string in Erlang binary form.
 BertClass.prototype.pp_bytes = function (Bin) {
-	var s = "";
-	for (var i = 0; i < Bin.length; i++) {
+	var i, s = "";
+	for (i = 0; i < Bin.length; i++) {
 		if (s != "") {
 			s += ",";
 		}
@@ -509,20 +511,21 @@ BertClass.prototype.test_encode = function () {
 };
 
 BertClass.prototype.test_decode = function () {
+	var TestTerm1, TestTerm2, TestTerm3, TestTerm4;
 	// Try decoding this: [{atom, myAtom},{binary, <<"My Binary">>},{bool, true}, {string, "Hello there"}],
-	var TestTerm1 = this.bytes_to_string([131, 108, 0, 0, 0, 4, 104, 2, 100, 0, 4, 97, 116, 111, 109, 100, 0, 6, 109, 121, 65, 116, 111, 109, 104, 2, 100, 0, 6, 98, 105, 110, 97, 114, 121, 109, 0, 0, 0, 9, 77, 121, 32, 66, 105, 110, 97, 114, 121, 104, 2, 100, 0, 4, 98, 111, 111, 108, 100, 0, 4, 116, 114, 117, 101, 104, 2, 100, 0, 6, 115, 116, 114, 105, 110, 103, 107, 0, 11, 72, 101, 108, 108, 111, 32, 116, 104, 101, 114, 101, 106]);
+	TestTerm1 = this.bytes_to_string([131, 108, 0, 0, 0, 4, 104, 2, 100, 0, 4, 97, 116, 111, 109, 100, 0, 6, 109, 121, 65, 116, 111, 109, 104, 2, 100, 0, 6, 98, 105, 110, 97, 114, 121, 109, 0, 0, 0, 9, 77, 121, 32, 66, 105, 110, 97, 114, 121, 104, 2, 100, 0, 4, 98, 111, 111, 108, 100, 0, 4, 116, 114, 117, 101, 104, 2, 100, 0, 6, 115, 116, 114, 105, 110, 103, 107, 0, 11, 72, 101, 108, 108, 111, 32, 116, 104, 101, 114, 101, 106]);
 	alert(this.pp_term(this.decode(TestTerm1)));
 
 	// Try decoding this: [{small_integer, 42},{integer1, 5000},{integer2, -5000},{big_int1, 987654321},{big_int2, -987654321}],
-	var TestTerm2 = this.bytes_to_string([131, 108, 0, 0, 0, 5, 104, 2, 100, 0, 13, 115, 109, 97, 108, 108, 95, 105, 110, 116, 101, 103, 101, 114, 97, 42, 104, 2, 100, 0, 8, 105, 110, 116, 101, 103, 101, 114, 49, 98, 0, 0, 19, 136, 104, 2, 100, 0, 8, 105, 110, 116, 101, 103, 101, 114, 50, 98, 255, 255, 236, 120, 104, 2, 100, 0, 8, 98, 105, 103, 95, 105, 110, 116, 49, 110, 4, 0, 177, 104, 222, 58, 104, 2, 100, 0, 8, 98, 105, 103, 95, 105, 110, 116, 50, 110, 4, 1, 177, 104, 222, 58, 106]);
+	TestTerm2 = this.bytes_to_string([131, 108, 0, 0, 0, 5, 104, 2, 100, 0, 13, 115, 109, 97, 108, 108, 95, 105, 110, 116, 101, 103, 101, 114, 97, 42, 104, 2, 100, 0, 8, 105, 110, 116, 101, 103, 101, 114, 49, 98, 0, 0, 19, 136, 104, 2, 100, 0, 8, 105, 110, 116, 101, 103, 101, 114, 50, 98, 255, 255, 236, 120, 104, 2, 100, 0, 8, 98, 105, 103, 95, 105, 110, 116, 49, 110, 4, 0, 177, 104, 222, 58, 104, 2, 100, 0, 8, 98, 105, 103, 95, 105, 110, 116, 50, 110, 4, 1, 177, 104, 222, 58, 106]);
 	alert(this.pp_term(this.decode(TestTerm2)));
 
 	// Try decoding this: -3.14159
-	var TestTerm3 = this.bytes_to_string([131, 99, 45, 51, 46, 49, 52, 49, 53, 56, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 56, 56, 50, 54, 50, 101, 43, 48, 48, 0, 0, 0, 0]);
+	TestTerm3 = this.bytes_to_string([131, 99, 45, 51, 46, 49, 52, 49, 53, 56, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 56, 56, 50, 54, 50, 101, 43, 48, 48, 0, 0, 0, 0]);
 	alert(this.pp_term(this.decode(TestTerm3)));
 
 	// Try decoding this: [] (empty list)
-	var TestTerm4 = this.bytes_to_string([131, 106]);
+	TestTerm4 = this.bytes_to_string([131, 106]);
 	alert(this.pp_term(this.decode(TestTerm4)));
 };
 
