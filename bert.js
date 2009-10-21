@@ -58,7 +58,7 @@ function BertTuple(Arr) {
 	this.toString = function () {
 		var i, s = "";
 		for (i = 0; i < this.length; i++) {
-			if (s != "") {
+			if (s !== "") {
 				s += ", ";
 			}
 			s += this[i].toString();
@@ -77,11 +77,11 @@ BertClass.prototype.encode = function (Obj) {
 };
 
 BertClass.prototype.decode = function (S) {
-	if (S[0] != this.BERT_START) {
+	if (S[0] !== this.BERT_START) {
 		throw ("Not a valid BERT.");
 	}
 	var Obj = this.decode_inner(S.substring(1));
-	if (Obj.rest != "") {
+	if (Obj.rest !== "") {
 		throw ("Invalid BERT.");
 	}
 	return Obj.value;
@@ -159,19 +159,18 @@ BertClass.prototype.encode_float = function (Obj) {
 
 BertClass.prototype.encode_object = function (Obj) {
 	// Check if it's an atom, binary, or tuple...
-	if (Obj.type == "Atom") {
+	if (Obj.type === "Atom") {
 		return this.encode_atom(Obj);
 	}
-	if (Obj.type == "Binary") {
+	if (Obj.type === "Binary") {
 		return this.encode_binary(Obj);
 	}
-	if (Obj.type == "Tuple") {
+	if (Obj.type === "Tuple") {
 		return this.encode_tuple(Obj);
 	}
 
 	// Check if it's an array...
-	var isArray = Obj.constructor.toString().indexOf("Array") != -1;
-	if (isArray) {
+	if (Obj.constructor.toString().indexOf("Array") !== -1) {
 		return this.encode_array(Obj);
 	}
 
@@ -263,10 +262,10 @@ BertClass.prototype.decode_atom = function (S, Count) {
 	Size = this.bytes_to_int(S, Count);
 	S = S.substring(Count);
 	Value = S.substring(0, Size);
-	if (Value == "true") {
+	if (Value === "true") {
 		Value = true;
 	}
-	else if (Value == "false") {
+	else if (Value === "false") {
 		Value = false;
 	}
 	return {
@@ -331,7 +330,7 @@ BertClass.prototype.decode_list = function (S) {
 		S = El.rest;
 	}
 	LastChar = S[0];
-	if (LastChar != this.NIL) {
+	if (LastChar !== this.NIL) {
 		throw ("List does not end with NIL!");
 	}
 	S = S.substring(1);
@@ -441,7 +440,7 @@ BertClass.prototype.bignum_to_bytes = function (Int) {
 // Encode a list of bytes into an Erlang bignum.
 BertClass.prototype.bytes_to_bignum = function (S, Count) {
 	var isNegative, i, n, Num = 0;
-	isNegative = (String.charCodeAt(S[0]) == 1);
+	isNegative = (String.charCodeAt(S[0]) === 1);
 	S = S.substring(1);
 	for (i = Count - 1; i >= 0; i--) {
 		n = String.charCodeAt(S[i]);
@@ -473,7 +472,7 @@ BertClass.prototype.bytes_to_string = function (Arr) {
 BertClass.prototype.pp_bytes = function (Bin) {
 	var i, s = "";
 	for (i = 0; i < Bin.length; i++) {
-		if (s != "") {
+		if (s !== "") {
 			s += ",";
 		}
 		s += "" + String.charCodeAt(Bin[i]);
