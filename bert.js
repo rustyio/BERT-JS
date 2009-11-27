@@ -117,7 +117,7 @@ BertClass.prototype.encode_boolean = function (Obj) {
 		return this.encode_inner(this.atom("true"));
 	}
 	else {
-		return this.encode_inne(this.atom("false"));
+		return this.encode_inner(this.atom("false"));
 	}
 };
 
