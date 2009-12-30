@@ -253,7 +253,7 @@ BertClass.prototype.decode_inner = function (S) {
 	case this.NIL:
 		return this.decode_nil(S);
 	default:
-		throw ("Unexpected BERT type: " + String.charCodeAt(Type));
+		throw ("Unexpected BERT type: " + S.charCodeAt(0));
 	}
 };
 
@@ -395,9 +395,9 @@ BertClass.prototype.int_to_bytes = function (Int, Length) {
 // of the supplied string.
 BertClass.prototype.bytes_to_int = function (S, Length) {
 	var isNegative, i, n, Num = 0;
-	isNegative = (String.charCodeAt(S[0]) > 128);
+	isNegative = (S.charCodeAt(0) > 128);
 	for (i = 0; i < Length; i++) {
-		n = String.charCodeAt(S[i]);
+		n = S.charCodeAt(i);
 		if (isNegative) {
 			n = 255 - n;
 		}
@@ -440,10 +440,10 @@ BertClass.prototype.bignum_to_bytes = function (Int) {
 // Encode a list of bytes into an Erlang bignum.
 BertClass.prototype.bytes_to_bignum = function (S, Count) {
 	var isNegative, i, n, Num = 0;
-	isNegative = (String.charCodeAt(S[0]) === 1);
+	isNegative = (S.charCodeAt(0) === 1);
 	S = S.substring(1);
 	for (i = Count - 1; i >= 0; i--) {
-		n = String.charCodeAt(S[i]);
+		n = S.charCodeAt(i);
 		if (Num === 0) {
 			Num = n;
 		}
@@ -475,7 +475,7 @@ BertClass.prototype.pp_bytes = function (Bin) {
 		if (s !== "") {
 			s += ",";
 		}
-		s += "" + String.charCodeAt(Bin[i]);
+		s += "" + Bin.charCodeAt(i);
 	}
 	return "<<" + s + ">>";
 };
