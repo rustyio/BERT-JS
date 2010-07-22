@@ -118,7 +118,7 @@ describe('Bert')
         
     	// Try decoding this: -3.14159
     	var term = Bert.decode(Bert.bytes_to_string([131, 99, 45, 51, 46, 49, 52, 49, 53, 56, 57, 57, 57, 57, 57, 57, 57, 57, 57, 57, 56, 56, 50, 54, 50, 101, 43, 48, 48, 0, 0, 0, 0]));
-        expect(Bert.pp_term(term)).toBe(-3.14159);
+        expect(term).toBe(-3.14159);
 
     	
     })
