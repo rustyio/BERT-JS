@@ -200,6 +200,7 @@ BertClass.prototype.encode_tuple = function (Obj) {
 };
 
 BertClass.prototype.encode_array = function (Obj) {
+    if (Obj.length == 0) return this.NIL;
 	var i, s = this.LIST + this.int_to_bytes(Obj.length, 4);
 	for (i = 0; i < Obj.length; i++) {
 		s += this.encode_inner(Obj[i]);
