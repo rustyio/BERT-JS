@@ -1,7 +1,7 @@
 describe('Bert')
     .should('encode atom', function(){
     	expect(Bert.binary_to_list(Bert.encode(Bert.atom("hello")))).toEqual([
-    	    131,107,0,5,104,101,108,108,111
+    	    131,100,0,5,104,101,108,108,111
     	    ]);
     })
     .should('encode binary', function(){
@@ -13,8 +13,19 @@ describe('Bert')
     	expect(Bert.binary_to_list(Bert.encode(true))).toEqual([
     	    131,100,0,4,116,114,117,101
     	]);
+    	expect(Bert.binary_to_list(Bert.encode(false))).toEqual([
+    	    131,100,0,5,102,97,108,115,101
+    	]);
     })
     .should('encode ints', function(){
+        expect(Bert.binary_to_list(Bert.encode(0))).toEqual([
+    	    131,97,0
+    	]);
+    	
+    	expect(Bert.binary_to_list(Bert.encode(-1))).toEqual([
+    	    131,98,255,255,255,255
+    	]);
+    	
     	expect(Bert.binary_to_list(Bert.encode(42))).toEqual([
     	    131,97,42
     	]);
@@ -37,6 +48,10 @@ describe('Bert')
     })
     	
     .should('encode floats', function(){
+        expect(Bert.binary_to_list(Bert.encode(2.5))).toEqual([
+            131,99,50,46,53,48,48,48,48,48,48,48,48,48,48,48,48,48,48,
+            48,48,48,48,48,101,43,48,48,0,0,0,0,0
+            ])
         
     	expect(Bert.binary_to_list(Bert.encode(3.14159))).toEqual([
     	    131,99,51,46,49,52,49,53,56,57,57,57,57,57,57,57,57,57,57,
@@ -49,7 +64,13 @@ describe('Bert')
     	]);
     })
     
-    .should('encode lists', function(){
+    .should('encode arrays', function(){
+        expect(Bert.binary_to_list(Bert.encode(["1","2","3"]))).toEqual([
+    	    131,108,0,0,0,3,107,0,1,49,107,0,1,50,107,0,1,51,106
+    	]);
+    })
+    
+    .should('encode numeric arrays', function(){
         expect(Bert.binary_to_list(Bert.encode([1,2,3]))).toEqual([
     	    131,107,0,3,1,2,3
     	]);
@@ -86,10 +107,12 @@ describe('Bert')
         expect(Bert.pp_term(term)).toBe('{atom,myAtom},{binary,<<"My Binary">>},{bool,true},{string,Hello there}')
         
     })
-    
+    .should('decode negative ints', function(){
+        expect(Bert.decode(Bert.bytes_to_string([131,98,255,255,255,255]))).toBe(-1)
+    })
     .should('decode ints', function(){
         var term = Bert.decode(Bert.bytes_to_string([131, 108, 0, 0, 0, 5, 104, 2, 100, 0, 13, 115, 109, 97, 108, 108, 95, 105, 110, 116, 101, 103, 101, 114, 97, 42, 104, 2, 100, 0, 8, 105, 110, 116, 101, 103, 101, 114, 49, 98, 0, 0, 19, 136, 104, 2, 100, 0, 8, 105, 110, 116, 101, 103, 101, 114, 50, 98, 255, 255, 236, 120, 104, 2, 100, 0, 8, 98, 105, 103, 95, 105, 110, 116, 49, 110, 4, 0, 177, 104, 222, 58, 104, 2, 100, 0, 8, 98, 105, 103, 95, 105, 110, 116, 50, 110, 4, 1, 177, 104, 222, 58, 106]));
-        expect(Bert.pp_term(term)).toBe('{small_integer,42},{integer1,5000},{integer2,-5000},{big_int1, 987654321},{big_int2,-987654321}')
+        expect(Bert.pp_term(term)).toBe('{small_integer,42},{integer1,5000},{integer2,-5000},{big_int1,987654321},{big_int2,-987654321}')
     })
     .should('decode floats', function(){
         

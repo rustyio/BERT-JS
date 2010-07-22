@@ -375,7 +375,7 @@ BertClass.prototype.int_to_bytes = function (Int, Length) {
 	var isNegative, OriginalInt, i, Rem, s = "";
 	isNegative = (Int < 0);
 	if (isNegative) {
-		Int = Int * (0 - 1);
+		Int = - Int - 1;
 	}
 	OriginalInt = Int;
 	for (i = 0; i < Length; i++) {
@@ -410,7 +410,7 @@ BertClass.prototype.bytes_to_int = function (S, Length) {
 		}
 	}
 	if (isNegative) {
-		Num = Num * (0 - 1);
+		Num = -Num - 1;
 	}
 	return Num;
 };
