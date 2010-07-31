@@ -46,7 +46,19 @@ describe('Bert')
     	    131,110,4,1,177,104,222,58
     	]);
     })
-    	
+    
+    .should('encode null', function(){
+        expect(Bert.binary_to_list(Bert.encode(null))).toEqual([
+            131,100,0,4,110,117,108,108
+            ])
+    })
+    
+    .should('not encode undefined', function(){
+        expect(function(){
+            Bert.binary_to_list(Bert.encode(undefined))
+        }).toRaise("Cannot encode undefined values.")
+    })
+    
     .should('encode floats', function(){
         expect(Bert.binary_to_list(Bert.encode(2.5))).toEqual([
             131,99,50,46,53,48,48,48,48,48,48,48,48,48,48,48,48,48,48,
@@ -69,17 +81,23 @@ describe('Bert')
     	    131,108,0,0,0,3,107,0,1,49,107,0,1,50,107,0,1,51,106
     	]);
     })
+    /*
     
-    .should('encode numeric arrays', function(){
+    Am thinking probably don't support small int arrays. In a dynamic
+    language this may not make sense.
+    .should('encode small int arrays', function(){
         expect(Bert.binary_to_list(Bert.encode([1,2,3]))).toEqual([
     	    131,107,0,3,1,2,3
     	]);
     })
     
+    .should('decode small int arrays', function(){
+        expect(Bert.decode(Bert.bytes_to_string([131,107,0,3,1,2,3]))).toEqual([1,2,3])
+    })
+    */
     .should('encode assoc arrays', function(){
         expect(Bert.binary_to_list(Bert.encode({a : 1, b : 2, c : 3}))).toEqual([
-            131,108,0,0,0,3,104,2,107,0,1,97,97,1,104,2,107,0,1,98,
-              97,2,104,2,107,0,1,99,97,3,106
+            131,108,0,0,0,3,104,2,100,0,1,97,97,1,104,2,100,0,1,98,97,2,104,2,100,0,1,99,97,3,106
             ])
     })
     .should('encode tuple', function(){
@@ -95,10 +113,9 @@ describe('Bert')
     .should('encode complex', function(){
         expect(Bert.binary_to_list(Bert.encode({
     		a : Bert.tuple(1, 2, 3),
-    		b : [4, 5, 6]
+    		b : [400, 5, 6]
     	}))).toEqual([
-            131,108,0,0,0,2,104,2,107,0,1,97,104,3,97,1,97,2,97,3,
-              104,2,107,0,1,98,107,0,3
+            131,108,0,0,0,2,104,2,100,0,1,97,104,3,97,1,97,2,97,3,104,2,100,0,1,98,108,0,0,0,3,98,0,0,1,144,97,5,97,6,106,106
             ])
     })
     .should('decode complex', function(){

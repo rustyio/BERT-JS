@@ -104,6 +104,7 @@ BertClass.prototype.tuple = function () {
 // - ENCODING -
 
 BertClass.prototype.encode_inner = function (Obj) {
+    if (Obj === undefined) throw new Error("Cannot encode undefined values.")
 	var func = 'encode_' + typeof(Obj);
 	return this[func](Obj);
 };
@@ -159,6 +160,9 @@ BertClass.prototype.encode_float = function (Obj) {
 
 BertClass.prototype.encode_object = function (Obj) {
 	// Check if it's an atom, binary, or tuple...
+	if (Obj === null){
+	    return this.encode_inner(this.atom("null"));
+	}
 	if (Obj.type === "Atom") {
 		return this.encode_atom(Obj);
 	}
