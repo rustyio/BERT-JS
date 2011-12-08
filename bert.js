@@ -355,7 +355,7 @@ BertClass.prototype.decode_tuple = function (S, Count) {
 		S = El.rest;
 	}
 	return {
-      value: this.tuple.apply(this,Arr),
+		value: this.tuple.apply(this,Arr),
 		rest: S
 	};
 };
