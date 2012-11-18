@@ -115,10 +115,12 @@ BertClass.prototype.encode_string = function (Obj) {
 
 BertClass.prototype.encode_boolean = function (Obj) {
 	if (Obj) {
-		return this.encode_inner(this.atom("true"));
+		return this.encode_inner(
+			this.tuple(this.atom("bert"), this.atom("true")));
 	}
 	else {
-		return this.encode_inner(this.atom("false"));
+		return this.encode_inner(
+			this.tuple(this.atom("bert"), this.atom("false")));
 	}
 };
 
@@ -204,7 +206,9 @@ BertClass.prototype.encode_tuple = function (Obj) {
 };
 
 BertClass.prototype.encode_array = function (Obj) {
-    if (Obj.length == 0) return this.NIL;
+	if (Obj.length == 0)
+		return this.encode_inner(
+			this.tuple(this.atom("bert"), this.atom("nil")));
 	var i, s = this.LIST + this.int_to_bytes(Obj.length, 4);
 	for (i = 0; i < Obj.length; i++) {
 		s += this.encode_inner(Obj[i]);
@@ -267,12 +271,6 @@ BertClass.prototype.decode_atom = function (S, Count) {
 	Size = this.bytes_to_int(S, Count);
 	S = S.substring(Count);
 	Value = S.substring(0, Size);
-	if (Value === "true") {
-		Value = true;
-	}
-	else if (Value === "false") {
-		Value = false;
-	}
 	return {
 		value: this.atom(Value),
 		rest:  S.substring(Size)
@@ -353,6 +351,31 @@ BertClass.prototype.decode_tuple = function (S, Count) {
 		El = this.decode_inner(S);
 		Arr.push(El.value);
 		S = El.rest;
+	}
+	if (Size >= 2) {
+		var Head = Arr[0];
+		if (typeof Head === 'object' && Head.type === 'Atom'
+		    && Head.value === "bert") {
+			var Kind = Arr[1];
+			if (typeof Kind !== 'object' || Kind.type !== 'Atom') {
+				throw ("Invalid {bert, _} tuple!");
+			}
+			switch (Kind.value) {
+			case "true":
+				return {value: true, rest: S};
+			case "false":
+				return {value: false, rest: S};
+			case "nil":
+				return {value: [], rest: S};
+			case "time":
+			case "dict":
+			case "regex":
+				throw ("TODO: decode " + Kind.Value);
+			default:
+				throw ("Invalid {bert, " +
+				    Kind.Value.toString() + "} tuple!");
+			}
+		}
 	}
 	return {
 		value: this.tuple.apply(this,Arr),

@@ -141,13 +141,13 @@ describe('Bert')
     })
     .should('decode empty list', function(){
         var term = Bert.decode(Bert.bytes_to_string([131,104,2,100,0,4,98,101,114,116,100,0,3,110,105,108]));
-        expect(Bert.pp_term(term)).toEqual([]);
+        expect(term).toEqual([]);
     })
     .should('decode true', function(){
         var term = Bert.decode(Bert.bytes_to_string([131,104,2,100,0,4,98,101,114,116,100,0,4,116,114,117,101]));
-        expect(Bert.pp_term(term)).toEqual(true);
+        expect(term).toEqual(true);
     })
     .should('decode false', function(){
         var term = Bert.decode(Bert.bytes_to_string([131,104,2,100,0,4,98,101,114,116,100,0,5,102,97,108,115,101]));
-        expect(Bert.pp_term(term)).toEqual(false);
+        expect(term).toEqual(false);
     })
