@@ -121,7 +121,7 @@ describe('Bert')
     .should('decode complex', function(){
         
         var term = Bert.decode(Bert.bytes_to_string([131, 108, 0, 0, 0, 4, 104, 2, 100, 0, 4, 97, 116, 111, 109, 100, 0, 6, 109, 121, 65, 116, 111, 109, 104, 2, 100, 0, 6, 98, 105, 110, 97, 114, 121, 109, 0, 0, 0, 9, 77, 121, 32, 66, 105, 110, 97, 114, 121, 104, 2, 100, 0, 4, 98, 111, 111, 108, 100, 0, 4, 116, 114, 117, 101, 104, 2, 100, 0, 6, 115, 116, 114, 105, 110, 103, 107, 0, 11, 72, 101, 108, 108, 111, 32, 116, 104, 101, 114, 101, 106]))
-        expect(Bert.pp_term(term)).toBe('{atom,myAtom},{binary,<<"My Binary">>},{bool,true},{string,Hello there}')
+        expect(Bert.pp_term(term)).toBe('{atom, myAtom},{binary, <<"My Binary">>},{bool, true},{string, Hello there}')
         
     })
     .should('decode negative ints', function(){
@@ -129,7 +129,7 @@ describe('Bert')
     })
     .should('decode ints', function(){
         var term = Bert.decode(Bert.bytes_to_string([131, 108, 0, 0, 0, 5, 104, 2, 100, 0, 13, 115, 109, 97, 108, 108, 95, 105, 110, 116, 101, 103, 101, 114, 97, 42, 104, 2, 100, 0, 8, 105, 110, 116, 101, 103, 101, 114, 49, 98, 0, 0, 19, 136, 104, 2, 100, 0, 8, 105, 110, 116, 101, 103, 101, 114, 50, 98, 255, 255, 236, 120, 104, 2, 100, 0, 8, 98, 105, 103, 95, 105, 110, 116, 49, 110, 4, 0, 177, 104, 222, 58, 104, 2, 100, 0, 8, 98, 105, 103, 95, 105, 110, 116, 50, 110, 4, 1, 177, 104, 222, 58, 106]));
-        expect(Bert.pp_term(term)).toBe('{small_integer,42},{integer1,5000},{integer2,-5000},{big_int1,987654321},{big_int2,-987654321}')
+        expect(Bert.pp_term(term)).toBe('{small_integer, 42},{integer1, 5000},{integer2, -5000},{big_int1, 987654321},{big_int2, -987654321}')
     })
     .should('decode floats', function(){
         
