@@ -11,10 +11,10 @@ describe('Bert')
     })
     .should('encode boolean', function(){
     	expect(Bert.binary_to_list(Bert.encode(true))).toEqual([
-    	    131,100,0,4,116,114,117,101
+            131,104,2,100,0,4,98,101,114,116,100,0,4,116,114,117,101
     	]);
     	expect(Bert.binary_to_list(Bert.encode(false))).toEqual([
-    	    131,100,0,5,102,97,108,115,101
+            131,104,2,100,0,4,98,101,114,116,100,0,5,102,97,108,115,101
     	]);
     })
     .should('encode ints', function(){
@@ -107,7 +107,7 @@ describe('Bert')
     })
     .should('encode empty list', function(){
         expect(Bert.binary_to_list(Bert.encode([]))).toEqual([
-            131,106
+            131,104,2,100,0,4,98,101,114,116,100,0,3,110,105,108
             ])
     })
     .should('encode complex', function(){
@@ -140,6 +140,14 @@ describe('Bert')
     	
     })
     .should('decode empty list', function(){
-    	var term = Bert.decode(Bert.bytes_to_string([131, 106]));
+        var term = Bert.decode(Bert.bytes_to_string([131,104,2,100,0,4,98,101,114,116,100,0,3,110,105,108]));
         expect(Bert.pp_term(term)).toEqual([]);
+    })
+    .should('decode true', function(){
+        var term = Bert.decode(Bert.bytes_to_string([131,104,2,100,0,4,98,101,114,116,100,0,4,116,114,117,101]));
+        expect(Bert.pp_term(term)).toEqual(true);
+    })
+    .should('decode false', function(){
+        var term = Bert.decode(Bert.bytes_to_string([131,104,2,100,0,4,98,101,114,116,100,0,5,102,97,108,115,101]));
+        expect(Bert.pp_term(term)).toEqual(false);
     })
