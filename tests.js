@@ -124,6 +124,9 @@ describe('Bert')
         expect(Bert.pp_term(term)).toBe('{atom, myAtom},{binary, <<"My Binary">>},{bool, true},{string, Hello there}')
         
     })
+    .should('decode small ints', function(){
+        expect(Bert.decode(Bert.bytes_to_string([131,97,130]))).toBe(130)
+    })
     .should('decode negative ints', function(){
         expect(Bert.decode(Bert.bytes_to_string([131,98,255,255,255,255]))).toBe(-1)
     })
