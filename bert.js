@@ -497,7 +497,4 @@ BertClass.prototype.binary_to_list = function (Str){
     return ret;
 };
 
-var Bert = new BertClass();
-
-// Bert.test_encode();
-// Bert.test_decode();
+module.exports = new BertClass();
