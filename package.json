@@ -1,0 +1,22 @@
+{
+  "name": "bert-js",
+  "version": "1.0.0",
+  "description": "Erlang BERT format encoder/decoder for javascript",
+  "main": "bert.js",
+  "scripts": {
+    "test": "mocha tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stjepano/BERT-JS.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stjepano/BERT-JS/issues"
+  },
+  "homepage": "https://github.com/stjepano/BERT-JS#readme",
+  "dependencies": {
+    "chai": "^3.5.0"
+  }
+}

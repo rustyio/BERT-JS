@@ -30,6 +30,7 @@ function BertClass() {
 	this.LARGE_TUPLE = String.fromCharCode(105);
 	this.NIL = String.fromCharCode(106);
 	this.ZERO = String.fromCharCode(0);
+    this.ZERO_CHAR = String.fromCharCode(48);
 }
 
 function BertAtom(Obj) {
@@ -153,7 +154,16 @@ BertClass.prototype.encode_number = function (Obj) {
 
 BertClass.prototype.encode_float = function (Obj) {
 	// float...
-	var s = Obj.toExponential();
+	var s = Obj.toExponential(20);
+    var match = /([^e]+)(e[+-])(\d+)/.exec(s);
+    var a = match[1];
+    var b = match[2];
+    var c = match[3];
+    var exponentialPart = c;
+    if ( exponentialPart.length == 1 ) {
+        exponentialPart = '0' + exponentialPart;
+    }
+    s = a+b+exponentialPart;
 	while (s.length < 31) {
 		s += this.ZERO;
 	}
@@ -529,7 +539,4 @@ BertClass.prototype.binary_to_list = function (Str){
     return ret;
 };
 
-var Bert = new BertClass();
-
-// Bert.test_encode();
-// Bert.test_decode();
+module.exports = new BertClass();
