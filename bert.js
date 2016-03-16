@@ -242,7 +242,7 @@ BertClass.prototype.decode_inner = function (S) {
 	case this.BINARY:
 		return this.decode_binary(S);
 	case this.SMALL_INTEGER:
-		return this.decode_integer(S, 1);
+		return this.decode_small_integer(S);
 	case this.INTEGER:
 		return this.decode_integer(S, 4);
 	case this.SMALL_BIG:
@@ -283,6 +283,15 @@ BertClass.prototype.decode_binary = function (S) {
 	return {
 		value: this.binary(S.substring(0, Size)),
 		rest:  S.substring(Size)
+	};
+};
+
+BertClass.prototype.decode_small_integer = function (S) {
+	var Value = S.charCodeAt(0);
+	S = S.substring(1);
+	return {
+		value: Value,
+		rest:  S
 	};
 };
 
