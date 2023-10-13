@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/stjepano/BERT-JS#readme",
   "dependencies": {
-    "chai": "^3.5.0"
+    "chai": "^3.5.0",
+    "mocha": "^10.2.0"
   }
 }

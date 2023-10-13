@@ -160,4 +160,41 @@ describe('Bert', function() {
         expect(term).to.equal(false);
     })
 
+    it ('should decode an empty map', () => {
+        // #{}
+        var term = Bert.decode(Bert.bytes_to_string([131,116,0,0,0,0]));
+        expect(term).to.deep.equal({});
+    })
+
+    it ('should decode a map with integer as key', () => {
+        // #{ 1 => 2 }
+        var term = Bert.decode(Bert.bytes_to_string([131,116,0,0,0,1,97,1,97,2]));
+        expect(term).to.deep.equal({ '1': 2 });
+    })
+    
+    it ('should decode a map with binary as key', () => {
+        // #{<<"test">> => <<"test">>}
+        var term = Bert.decode(Bert.bytes_to_string([131,116,0,0,0,1,109,0,0,0,4,116,101,115,116,109,0,0,0,4,116,101,115,116]));
+        // expect(term).to.deep.equal();
+    })
+
+    it ('should decode a map with list as key', () => {
+        // #{ "test" => "test" }
+        var term = Bert.decode(Bert.bytes_to_string([131,116,0,0,0,1,107,0,4,116,101,115,116,107,0,4,116,101,115,116]));
+        expect(term).to.deep.equal({ test: 'test' });
+    })
+    
+    it ('should decode a map with atom as key', () => {
+        // #{ test => test }
+        var term = Bert.decode(Bert.bytes_to_string([131,116,0,0,0,1,100,0,4,116,101,115,116,100,0,4,116,101,115,116]));
+        console.log(term);
+        expect(term).to.deep.equal({ test: BertAtom({ type: 'Atom', value: 'test', toString: [Function (anonymous)] })});
+    })
+
+    it ('should decode a map of map', () => {
+        // #{ test => #{} }
+        var term = Bert.decode(Bert.bytes_to_string([131,116,0,0,0,1,100,0,4,116,101,115,116,116,0,0,0,0]));
+        expect(term).to.deep.equal({ test: {} })
+    })
+    
 });

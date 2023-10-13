@@ -30,7 +30,8 @@ function BertClass() {
 	this.LARGE_TUPLE = String.fromCharCode(105);
 	this.NIL = String.fromCharCode(106);
 	this.ZERO = String.fromCharCode(0);
-    this.ZERO_CHAR = String.fromCharCode(48);
+  this.ZERO_CHAR = String.fromCharCode(48);
+  this.MAP = String.fromCharCode(116);  
 }
 
 function BertAtom(Obj) {
@@ -64,12 +65,14 @@ function BertTuple(Arr) {
 			}
 			s += this[i].toString();
 		}
-
 		return "{" + s + "}";
 	};
 }
 
-
+function BertMap(Obj) {
+    this.type = "Map";
+    this.value = Obj;
+}
 
 // - INTERFACE -
 
@@ -100,7 +103,9 @@ BertClass.prototype.tuple = function () {
 	return new BertTuple(arguments);
 };
 
-
+BertClass.prototype.map = function () {
+    return new BertMap(arguments);
+}
 
 // - ENCODING -
 
@@ -270,7 +275,9 @@ BertClass.prototype.decode_inner = function (S) {
 	case this.LARGE_TUPLE:
 		return this.decode_large_tuple(S, 4);
 	case this.NIL:
-		return this.decode_nil(S);
+	  return this.decode_nil(S);
+  case this.MAP:
+    return this.decode_map(S);
 	default:
 		throw ("Unexpected BERT type: " + S.charCodeAt(0));
 	}
@@ -410,6 +417,34 @@ BertClass.prototype.decode_nil = function (S) {
 	};
 };
 
+BertClass.prototype.decode_map = function(S) {
+    var Arity, i, Pairs, Key, Value, Map = {};
+    
+    // get the number of pairs present in the map
+    // and remove it from the main string (4bytes)
+    Arity = this.bytes_to_int(S, 4);
+    S = S.substring(4);
+
+    // Loop over the pairs in the map
+    for (i=0; i<Arity; i++) {
+        // decode the key
+        Key = this.decode_inner(S);
+        S = Key.rest
+
+        // decode the value
+        Value = this.decode_inner(S);
+        S = Value.rest;
+
+        // put key/value into Map object
+        Map[Key.value] = Value.value;
+    }
+    
+    // finally return the map and the rest of the string
+    return {
+        value: Map,
+        rest: S
+    }
+}
 
 
 // - UTILITY FUNCTIONS -
